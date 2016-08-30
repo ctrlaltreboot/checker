@@ -1,6 +1,6 @@
 {
   "Checks": [
     "http://www.google.com",
-    "https://www.safaribooksonline.com/register",
+    "https://www.safaribooksonline.com/register"
   ]
 }
