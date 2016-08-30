@@ -7,21 +7,21 @@ import "fmt"
 import "io/ioutil"
 import "encoding/json"
 
-type Checks struct {
-	Urls []string
+type Urls struct {
+	Checks []string
 }
 
-func loadConfig(path string) Checks {
+func loadConfig(path string) Urls {
 	f, err := ioutil.ReadFile(path)
 
-	var c Checks
-	err = json.Unmarshal(f, &c)
+	var u Urls
+	err = json.Unmarshal(f, &u)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return c
+	return u
 }
 
 func measure(address string) {
@@ -46,9 +46,9 @@ func measure(address string) {
 }
 
 func main() {
-	c := loadConfig("./config.json")
-	for _, u := range c.Urls {
-		fmt.Println("Response time for:", u)
-		measure(u)
+	urls := loadConfig("./config.json")
+	for _, c := range urls.Checks {
+		fmt.Println("Response time for:", c)
+		measure(c)
 	}
 }
