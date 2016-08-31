@@ -1,18 +1,21 @@
 package main
 
-import "net/http"
-import "time"
-import "log"
-import "fmt"
-import "flag"
-import "io/ioutil"
-import "encoding/json"
+import (
+	"encoding/json"
+	"flag"
+	"fmt"
+	"github.com/jasonlvhit/gocron"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
+)
 
 type Urls struct {
 	Checks []string
 }
 
-func loadConfig(path string) Urls {
+func loadConfig() Urls {
 	confPtr := flag.String("config", "./config.json", "A fully qualified path for the configuration file")
 	flag.Parse()
 
@@ -44,10 +47,16 @@ func measure(address string) {
 	log.Println("Load Time:", time.Since(start))
 }
 
-func main() {
-	urls := loadConfig("./config.json")
+func check() {
+	urls := loadConfig()
 	for _, c := range urls.Checks {
 		fmt.Println("Response time for:", c)
 		measure(c)
 	}
+}
+
+func main() {
+	s := gocron.NewScheduler()
+	s.Every(2).Hours().Do(check)
+	<-s.Start()
 }
