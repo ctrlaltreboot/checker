@@ -15,11 +15,8 @@ type Urls struct {
 	Checks []string
 }
 
-func loadConfig() Urls {
-	confPtr := flag.String("config", "./config.json", "A fully qualified path for the configuration file")
-	flag.Parse()
-
-	f, err := ioutil.ReadFile(*confPtr)
+func loadConfig(path *string) Urls {
+	f, err := ioutil.ReadFile(*path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +45,9 @@ func measure(address string) {
 }
 
 func check() {
-	urls := loadConfig()
+	confPtr := flag.String("config", "./config.json", "A fully qualified path for the configuration file")
+	flag.Parse()
+	urls := loadConfig(confPtr)
 	for _, c := range urls.Checks {
 		fmt.Println("Response time for:", c)
 		measure(c)
@@ -57,6 +56,6 @@ func check() {
 
 func main() {
 	s := gocron.NewScheduler()
-	s.Every(1).Minute().Do(check)
+	s.Every(20).Seconds().Do(check)
 	<-s.Start()
 }
