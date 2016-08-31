@@ -13,10 +13,12 @@ type Urls struct {
 
 func loadConfig(path string) Urls {
 	f, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var u Urls
 	err = json.Unmarshal(f, &u)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,15 +31,8 @@ func measure(address string) {
 		Timeout: time.Second * 10,
 	}
 
-	res, err := netClient.Get(address)
-
-	if err != nil {
-		panic(err)
-	}
-
 	start := time.Now()
-
-	_, err = ioutil.ReadAll(res.Body)
+	_, err := netClient.Get(address)
 	if err != nil {
 		panic(err)
 	}
