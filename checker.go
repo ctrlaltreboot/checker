@@ -57,6 +57,6 @@ func check() {
 
 func main() {
 	s := gocron.NewScheduler()
-	s.Every(2).Hours().Do(check)
+	s.Every(1).Minute().Do(check)
 	<-s.Start()
 }
