@@ -4,6 +4,7 @@ import "net/http"
 import "time"
 import "log"
 import "fmt"
+import "flag"
 import "io/ioutil"
 import "encoding/json"
 
@@ -12,7 +13,10 @@ type Urls struct {
 }
 
 func loadConfig(path string) Urls {
-	f, err := ioutil.ReadFile(path)
+	confPtr := flag.String("config", "./config.json", "A fully qualified path for the configuration file")
+	flag.Parse()
+
+	f, err := ioutil.ReadFile(*confPtr)
 	if err != nil {
 		log.Fatal(err)
 	}
