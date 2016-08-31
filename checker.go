@@ -15,8 +15,15 @@ type Urls struct {
 	Checks []string
 }
 
-func loadConfig(path *string) Urls {
-	f, err := ioutil.ReadFile(*path)
+var conf string
+
+func init() {
+	flag.StringVar(&conf, "config", "./config.json", "A fully qualified path for the configuration file")
+	flag.Parse()
+}
+
+func loadConfig() Urls {
+	f, err := ioutil.ReadFile(conf)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,9 +52,7 @@ func measure(address string) {
 }
 
 func check() {
-	confPtr := flag.String("config", "./config.json", "A fully qualified path for the configuration file")
-	flag.Parse()
-	urls := loadConfig(confPtr)
+	urls := loadConfig()
 	for _, c := range urls.Checks {
 		fmt.Println("Response time for:", c)
 		measure(c)
