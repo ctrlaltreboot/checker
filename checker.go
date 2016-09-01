@@ -11,8 +11,11 @@ import (
 	"time"
 )
 
-type Urls struct {
-	Checks []string
+type Config struct {
+	Checks []struct {
+		Name string
+		URL  string
+	}
 }
 
 var conf string
@@ -22,19 +25,19 @@ func init() {
 	flag.Parse()
 }
 
-func loadConfig() Urls {
+func loadConfig() Config {
 	f, err := ioutil.ReadFile(conf)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var u Urls
-	err = json.Unmarshal(f, &u)
+	var cf Config
+	err = json.Unmarshal(f, &cf)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return u
+	return cf
 }
 
 func measure(address string) {
@@ -52,10 +55,10 @@ func measure(address string) {
 }
 
 func check() {
-	urls := loadConfig()
-	for _, c := range urls.Checks {
-		fmt.Println("Response time for:", c)
-		measure(c)
+	cf := loadConfig()
+	for _, c := range cf.Checks {
+		fmt.Println("Response time for:", c.URL)
+		measure(c.URL)
 	}
 }
 

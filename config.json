@@ -1,6 +1,12 @@
 {
   "Checks": [
-    "http://www.google.com",
-    "https://www.safaribooksonline.com/register"
+    {
+      "Name": "Google.com" ,
+      "URL": "http://www.google.com"
+    },
+    {
+      "Name": "Google.com" ,
+      "URL": "https://www.safaribooksonline.com/register"
+    }
   ]
 }
