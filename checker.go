@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
+	"github.com/DataDog/datadog-go/statsd"
 	"github.com/jasonlvhit/gocron"
 	"io/ioutil"
 	"log"
@@ -40,7 +40,7 @@ func loadConfig() Config {
 	return cf
 }
 
-func measure(address string) {
+func measure(address string) time.Duration {
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -51,14 +51,29 @@ func measure(address string) {
 		panic(err)
 	}
 
-	log.Println("Load Time:", time.Since(start))
+	return time.Since(start)
+}
+
+func ddog(nameSpace string, resTime time.Duration) {
+	cl, err := statsd.New("127.0.0.1:8125")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cl.Namespace = nameSpace
+
+	err = cl.Timing("request.duration", resTime, nil, 1)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func check() {
 	cf := loadConfig()
 	for _, c := range cf.Checks {
-		fmt.Println("Response time for:", c.Name)
-		measure(c.URL)
+		r := measure(c.URL)
+		ddog(c.Name, r)
+		log.Println("Response time for ", c.URL, "is", r)
 	}
 }
 
