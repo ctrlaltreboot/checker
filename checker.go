@@ -57,7 +57,7 @@ func measure(address string) {
 func check() {
 	cf := loadConfig()
 	for _, c := range cf.Checks {
-		fmt.Println("Response time for:", c.URL)
+		fmt.Println("Response time for:", c.Name)
 		measure(c.URL)
 	}
 }
