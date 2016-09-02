@@ -18,26 +18,22 @@ type Config struct {
 	}
 }
 
-var conf string
+var cf Config
 
 func init() {
+	var conf string
 	flag.StringVar(&conf, "config", "./config.json", "A fully qualified path for the configuration file")
 	flag.Parse()
-}
 
-func loadConfig() Config {
 	f, err := ioutil.ReadFile(conf)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var cf Config
 	err = json.Unmarshal(f, &cf)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	return cf
 }
 
 func measure(address string) time.Duration {
@@ -69,7 +65,6 @@ func ddog(nameSpace string, resTime time.Duration) {
 }
 
 func check() {
-	cf := loadConfig()
 	for _, c := range cf.Checks {
 		r := measure(c.URL)
 		ddog(c.Name, r)
