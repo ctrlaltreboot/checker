@@ -1,16 +1,16 @@
 {
   "Checks": [
     {
-      "Name": "Google" ,
+      "Name": "google" ,
       "URL": "http://www.google.com"
     },
     {
-      "Name": "O'Reilly",
+      "Name": "o'reilly",
       "URL": "https://www.safaribooksonline.com/register"
     }
   ],
   "Schedule": {
-    "Interval": 20,
+    "Interval": 5,
     "Unit": "seconds"
   }
 }

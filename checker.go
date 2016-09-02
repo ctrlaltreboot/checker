@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -15,6 +16,10 @@ type Config struct {
 	Checks []struct {
 		Name string
 		URL  string
+	}
+	Schedule struct {
+		Interval uint64
+		Unit     string
 	}
 }
 
@@ -58,7 +63,7 @@ func ddog(nameSpace string, resTime time.Duration) {
 
 	cl.Namespace = nameSpace
 
-	err = cl.Timing("request.duration", resTime, nil, 1)
+	err = cl.Timing(".request.duration", resTime, nil, 1)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,12 +73,21 @@ func check() {
 	for _, c := range cf.Checks {
 		r := measure(c.URL)
 		ddog(c.Name, r)
-		log.Println("Response time for ", c.URL, "is", r)
+		log.Println("Response time for", c.URL, "is", r)
 	}
 }
 
 func main() {
 	s := gocron.NewScheduler()
-	s.Every(20).Seconds().Do(check)
+
+	if cf.Schedule.Unit == "seconds" {
+		s.Every(cf.Schedule.Interval).Seconds().Do(check)
+	} else if cf.Schedule.Unit == "minutes" {
+		s.Every(cf.Schedule.Interval).Minutes().Do(check)
+	} else {
+		log.Println("Config schedule only accepts seconds or minutes")
+		os.Exit(1)
+	}
+
 	<-s.Start()
 }
